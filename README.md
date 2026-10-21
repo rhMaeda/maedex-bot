@@ -1,6 +1,6 @@
 # Maedex Bot
 
-Bot de música para Discord com comandos de barra. Aceita links e buscas de YouTube, Spotify e SoundCloud por meio do DisTube.
+Bot de música para Discord com comandos de barra. Aceita links de Spotify, YouTube e SoundCloud. Para buscas por nome, tenta YouTube primeiro e SoundCloud depois; links do Spotify usam seus metadados e buscam o áudio nessas fontes.
 
 ## Preparação
 

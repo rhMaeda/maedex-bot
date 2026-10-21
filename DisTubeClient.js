@@ -5,7 +5,7 @@ const { join } = require("path");
 const { DisTube } = require("distube");
 const { SpotifyPlugin } = require("@distube/spotify");
 const { SoundCloudPlugin } = require("@distube/soundcloud");
-const { YouTubePlugin } = require("@distube/youtube");
+const PreferredYouTubePlugin = require("./plugins/PreferredYouTubePlugin");
 const { YtDlpPlugin } = require("@distube/yt-dlp");
 const ffmpeg = process.platform === "linux" ? "ffmpeg" : require("ffmpeg-static");
 
@@ -23,9 +23,9 @@ class DisTubeClient extends Client {
       emitAddListWhenCreatingQueue: false,
       plugins: [
         new SpotifyPlugin(),
+        new PreferredYouTubePlugin(),
         new SoundCloudPlugin(),
-        new YouTubePlugin(),
-        new YtDlpPlugin()
+        new YtDlpPlugin({ update: false })
       ],
       ffmpeg: { path: ffmpeg }
     });
