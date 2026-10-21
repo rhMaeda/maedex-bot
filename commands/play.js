@@ -1,5 +1,8 @@
 const Command = require("../Command");
 const { SlashCommandBuilder, MessageFlags } = require("discord.js");
+const { isURL } = require("distube");
+const { SoundCloudPlugin } = require("@distube/soundcloud");
+const PreferredYouTubePlugin = require("../plugins/PreferredYouTubePlugin");
 
 module.exports = class PlayCommand extends Command {
   constructor(client) {
@@ -46,7 +49,15 @@ module.exports = class PlayCommand extends Command {
     await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
     try {
-      await this.client.distube.play(vc, input, {
+      // Preserva o erro de autenticação que o DisTube converte em NO_RESULT.
+      let song = input;
+      if (!isURL(input)) {
+        const youtube = this.client.distube.plugins.find(plugin => plugin instanceof PreferredYouTubePlugin);
+        const soundcloud = this.client.distube.plugins.find(plugin => plugin instanceof SoundCloudPlugin);
+        song = await youtube.searchSong(input) || await soundcloud.searchSong(input);
+        if (!song) throw new Error("Nenhuma música encontrada.");
+      }
+      await this.client.distube.play(vc, song, {
         skip,
         position,
         textChannel: interaction.channel,
@@ -56,7 +67,9 @@ module.exports = class PlayCommand extends Command {
       await interaction.editReply("✅ Música iniciada ou adicionada à fila.");
     } catch (err) {
       console.error(err);
-      await interaction.editReply("❌ Não consegui tocar essa música. Confira o link ou tente outro termo.");
+      await interaction.editReply(err.code === "YOUTUBE_AUTH_REQUIRED"
+        ? "❌ O YouTube bloqueou o acesso desta VPS. Configure YOUTUBE_COOKIES_FILE no servidor."
+        : "❌ Não consegui tocar essa música. Confira o link ou tente outro termo.");
     }
   }
 };

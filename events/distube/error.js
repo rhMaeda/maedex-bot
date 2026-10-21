@@ -7,7 +7,10 @@ module.exports = class DisTubeErrorEvent {
   run(error, queue) {
     console.error("Erro DisTube:", error);
     if (queue?.textChannel) {
-      queue.textChannel.send('❌ Não consegui reproduzir essa música. Tente outro link ou termo.').catch(console.error);
+      const message = error.code === "YOUTUBE_AUTH_REQUIRED"
+        ? "❌ O YouTube bloqueou o acesso do bot. O administrador precisa configurar o acesso na VPS."
+        : "❌ Não consegui reproduzir essa música. Tente outro link ou termo.";
+      queue.textChannel.send(message).catch(console.error);
     }
   }
 };
