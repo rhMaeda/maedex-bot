@@ -7,7 +7,7 @@ const { SpotifyPlugin } = require("@distube/spotify");
 const { SoundCloudPlugin } = require("@distube/soundcloud");
 const { YouTubePlugin } = require("@distube/youtube");
 const { YtDlpPlugin } = require("@distube/yt-dlp");
-const ffmpeg = require("ffmpeg-static");
+const ffmpeg = process.platform === "linux" ? "ffmpeg" : require("ffmpeg-static");
 
 class DisTubeClient extends Client {
   constructor(options) {
@@ -27,7 +27,7 @@ class DisTubeClient extends Client {
         new YouTubePlugin(),
         new YtDlpPlugin()
       ],
-      ffmpeg: ffmpeg
+      ffmpeg: { path: ffmpeg }
     });
 
     // Carrega comandos

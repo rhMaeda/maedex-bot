@@ -4,7 +4,7 @@ Bot de música para Discord com comandos de barra. Aceita links e buscas de YouT
 
 ## Preparação
 
-1. Instale Node.js 22 ou superior e execute `npm ci`.
+1. Instale Node.js 22 ou superior e execute `npm ci`. No Linux, instale também o FFmpeg do sistema (`sudo apt install ffmpeg` no Ubuntu).
 2. Copie `.env.example` para `.env` e preencha o token do bot, o ID da aplicação (`CLIENT_ID`) e o ID do servidor (`GUILD_ID`).
 3. Convide o bot para o servidor com os escopos `bot` e `applications.commands`. Ele precisa de acesso ao canal de texto e de permissão para conectar e falar no canal de voz.
 4. Execute `npm run deploy` para registrar os comandos nesse servidor.
