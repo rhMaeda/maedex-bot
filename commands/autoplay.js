@@ -1,5 +1,5 @@
 const Command = require("../Command");
-const { SlashCommandBuilder } = require("discord.js");
+const { SlashCommandBuilder, MessageFlags } = require("discord.js");
 
 module.exports = class AutoplayCommand extends Command {
   constructor(client) {
@@ -13,9 +13,9 @@ module.exports = class AutoplayCommand extends Command {
 
   async onChatInput(interaction) {
     const queue = this.client.distube.getQueue(interaction.guildId);
-    if (!queue) return interaction.reply({ content: "❌ Sem xuxi toncando!", ephemeral: true });
+    if (!queue) return interaction.reply({ content: "📭 Não há música tocando.", flags: MessageFlags.Ephemeral });
 
     const status = queue.toggleAutoplay();
-    interaction.reply(`🔁 Autoplay **${status ? "ativado" : "desativado"}**`);
+    return interaction.reply(`🔁 Autoplay **${status ? "ativado" : "desativado"}**`);
   }
 };

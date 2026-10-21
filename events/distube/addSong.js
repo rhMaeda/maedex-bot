@@ -5,6 +5,6 @@ module.exports = class AddSongEvent {
   }
 
   run(queue, song) {
-    queue.textChannel?.send(`➕ Adicionado à fila: **${song.name}**`);
+    queue.textChannel?.send(`➕ Adicionado à fila: **${song.name}**`).catch(console.error);
   }
 };

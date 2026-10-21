@@ -7,7 +7,7 @@ module.exports = class DisTubeErrorEvent {
   run(error, queue) {
     console.error("Erro DisTube:", error);
     if (queue?.textChannel) {
-      queue.textChannel.send(`❌ Ocorreu um erro: \`${error.message}\``).catch(() => {});
+      queue.textChannel.send('❌ Não consegui reproduzir essa música. Tente outro link ou termo.').catch(console.error);
     }
   }
 };

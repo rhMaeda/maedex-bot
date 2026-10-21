@@ -1,27 +1,15 @@
 require('dotenv').config();
-const { REST, Routes, SlashCommandBuilder } = require('discord.js');
+const { REST, Routes } = require('discord.js');
+const { readdirSync } = require('node:fs');
+const { join } = require('node:path');
 
-const commands = [
-    new SlashCommandBuilder()
-        .setName('play')
-        .setDescription('Toca música de YouTube, Spotify, SoundCloud ou busca por termo')
-        .addStringOption(option =>
-            option.setName('input') // ⚠ mudou de "query" para "input"
-                .setDescription('URL ou termo de pesquisa')
-                .setRequired(true)),
-    new SlashCommandBuilder()
-        .setName('skip')
-        .setDescription('Pula a música atual'),
-    new SlashCommandBuilder()
-        .setName('stop')
-        .setDescription('Para a música e desconecta'),
-    new SlashCommandBuilder()
-        .setName('autoplay')
-        .setDescription('Ativa ou desativa o autoplay'),
-    new SlashCommandBuilder()
-        .setName('queue')
-        .setDescription('Mostra a fila de músicas')
-].map(cmd => cmd.toJSON());
+for (const key of ['DISCORD_TOKEN', 'CLIENT_ID', 'GUILD_ID']) {
+    if (!process.env[key]) throw new Error(`Configure ${key} no arquivo .env`);
+}
+
+const commands = readdirSync(join(__dirname, 'commands'))
+    .filter(file => file.endsWith('.js'))
+    .map(file => new (require(join(__dirname, 'commands', file)))().slashBuilder.toJSON());
 
 const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
 
@@ -35,5 +23,6 @@ const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
         console.log('✅ Comandos registrados com sucesso!');
     } catch (err) {
         console.error(err);
+        process.exitCode = 1;
     }
 })();

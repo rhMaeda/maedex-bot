@@ -1,5 +1,5 @@
 const Command = require("../Command");
-const { SlashCommandBuilder } = require("discord.js");
+const { SlashCommandBuilder, MessageFlags } = require("discord.js");
 
 module.exports = class StopCommand extends Command {
   constructor(client) {
@@ -8,14 +8,15 @@ module.exports = class StopCommand extends Command {
     this.inVoiceChannel = true;
     this.slashBuilder = new SlashCommandBuilder()
       .setName("stop")
-      .setDescription("Xuxi foi tomar banho");
+      .setDescription("Para a música e desconecta o bot");
   }
 
   async onChatInput(interaction) {
     const queue = this.client.distube.getQueue(interaction.guildId);
-    if (!queue) return interaction.reply({ content: "❌Sem xuxi!", ephemeral: true });
+    if (!queue) return interaction.reply({ content: "📭 Não há música tocando.", flags: MessageFlags.Ephemeral });
 
-    queue.stop();
-    interaction.reply("⏹ Xuxi parada!");
+    await queue.stop();
+    this.client.distube.voices.leave(interaction.guildId);
+    return interaction.reply("⏹ Música parada. Até a próxima!");
   }
 };

@@ -5,6 +5,6 @@ module.exports = class PlaySongEvent {
   }
 
   run(queue, song) {
-    queue.textChannel?.send(`🎵 Tocando agora: **${song.name}**`);
+    queue.textChannel?.send(`🎵 Tocando agora: **${song.name}**`).catch(console.error);
   }
 };

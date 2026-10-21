@@ -5,6 +5,8 @@ module.exports = class FinishEvent {
   }
 
   run(queue) {
-    queue.textChannel?.send("⏹ Fila finalizada!");
+    queue.textChannel?.send("⏹ Fila finalizada!").catch(console.error);
+    // DisTube emite finish antes de remover a fila.
+    queueMicrotask(() => queue.voice.leave());
   }
 };

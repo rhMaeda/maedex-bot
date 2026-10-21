@@ -5,6 +5,6 @@ module.exports = class PlayListEvent {
   }
 
   run(queue, playlist) {
-    queue.textChannel?.send(`🎵 Tocando playlist: **${playlist.name}**`);
+    queue.textChannel?.send(`🎵 Tocando playlist: **${playlist.name}**`).catch(console.error);
   }
 };
