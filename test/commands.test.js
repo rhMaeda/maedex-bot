@@ -3,10 +3,12 @@ const assert = require('node:assert/strict');
 const { readdirSync } = require('node:fs');
 const { join } = require('node:path');
 const { Collection } = require('discord.js');
+const { Queue } = require('distube');
 const InteractionCreateEvent = require('../events/client/interactionCreate');
 const VoiceStateUpdateEvent = require('../events/client/voiceStateUpdate');
 const QueueCommand = require('../commands/queue');
 const SkipCommand = require('../commands/skip');
+const ShuffleCommand = require('../commands/shuffle');
 const StopCommand = require('../commands/stop');
 
 test('os comandos registráveis incluem as opções do play', () => {
@@ -14,10 +16,13 @@ test('os comandos registráveis incluem as opções do play', () => {
     .filter(file => file.endsWith('.js'))
     .map(file => new (require(join(__dirname, '../commands', file)))().slashBuilder.toJSON());
 
-  assert.deepEqual(definitions.map(command => command.name).sort(), ['autoplay', 'play', 'queue', 'skip', 'stop']);
+  assert.deepEqual(definitions.map(command => command.name).sort(), ['autoplay', 'play', 'queue', 'shuffle', 'skip', 'stop']);
   const play = definitions.find(command => command.name === 'play');
   assert.deepEqual(play.options.map(option => option.name), ['input', 'skip', 'position']);
   assert.equal(play.options[2].min_value, 1);
+  const skip = definitions.find(command => command.name === 'skip');
+  assert.deepEqual(skip.options.map(option => option.name), ['position']);
+  assert.equal(skip.options[0].min_value, 1);
 });
 
 test('somente usuários no mesmo canal de voz controlam a reprodução', async () => {
@@ -71,9 +76,72 @@ test('skip informa quando não existe próxima música', async () => {
   };
   let response;
   const command = new SkipCommand({ distube: { getQueue: () => queue } });
-  await command.onChatInput({ guildId: 'guild', reply: async message => { response = message; } });
+  await command.onChatInput({ guildId: 'guild', options: { getInteger: () => null }, reply: async message => { response = message; } });
 
   assert.match(response.content, /Não há próxima música/);
+});
+
+test('skip sem número avança uma música; com número vai à posição exibida em /queue', async () => {
+  const actions = [];
+  const queue = {
+    songs: Array.from({ length: 9 }, (_, index) => ({ name: `Música ${index}` })),
+    skip: async () => { actions.push('skip'); },
+    jump: async position => { actions.push(`jump ${position}`); },
+  };
+  const command = new SkipCommand({ distube: { getQueue: () => queue } });
+  const interaction = position => ({
+    guildId: 'guild',
+    options: { getInteger: () => position },
+    reply: async () => {},
+  });
+
+  await command.onChatInput(interaction(null));
+  await command.onChatInput(interaction(7));
+  assert.deepEqual(actions, ['skip', 'jump 7']);
+});
+
+test('jump(7) do DisTube seleciona a sétima próxima música', async () => {
+  const songs = Array.from({ length: 9 }, (_, index) => ({ id: String(index) }));
+  const queue = {
+    songs: [...songs],
+    previousSongs: [],
+    options: { savePreviousSongs: false },
+    _taskQueue: { queuing: async () => {}, resolve: () => {} },
+    voice: { stop: () => {} },
+  };
+
+  assert.equal(await Queue.prototype.jump.call(queue, 7), songs[7]);
+});
+
+test('skip recusa número fora da fila sem alterar a reprodução', async () => {
+  let response;
+  const queue = {
+    songs: [{}, {}, {}],
+    jump: () => { throw new Error('jump não deve ser chamado'); },
+  };
+  const command = new SkipCommand({ distube: { getQueue: () => queue } });
+  await command.onChatInput({
+    guildId: 'guild',
+    options: { getInteger: () => 7 },
+    reply: async message => { response = message; },
+  });
+
+  assert.match(response.content, /música 7 não existe/);
+});
+
+test('shuffle embaralha somente quando há pelo menos duas músicas aguardando', async () => {
+  const actions = [];
+  const queue = { songs: [{}, {}, {}], shuffle: async () => { actions.push('shuffle'); } };
+  const command = new ShuffleCommand({ distube: { getQueue: () => queue } });
+  let response;
+  const interaction = { guildId: 'guild', reply: async message => { response = message; } };
+
+  await command.onChatInput(interaction);
+  assert.deepEqual(actions, ['shuffle']);
+  queue.songs.pop();
+  await command.onChatInput(interaction);
+  assert.match(response.content, /pelo menos duas próximas músicas/);
+  assert.deepEqual(actions, ['shuffle']);
 });
 
 test('stop encerra a fila antes de desconectar o bot', async () => {

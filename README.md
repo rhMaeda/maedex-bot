@@ -19,7 +19,8 @@ Se o YouTube bloquear a VPS com "Sign in to confirm you’re not a bot", siga o 
 | Comando | Uso |
 | --- | --- |
 | `/play input:<link ou nome>` | Toca ou adiciona uma música à fila. `skip` interrompe a atual e toca a nova agora; `position` define sua posição na fila. Use apenas uma dessas opções por vez. |
-| `/skip` | Pula para a próxima música. |
+| `/skip` | Pula para a próxima música. Com `position`, vai diretamente ao número mostrado em `/queue` e remove as músicas anteriores da fila. |
+| `/shuffle` | Embaralha as próximas músicas; a música atual continua tocando. |
 | `/stop` | Para a reprodução e desconecta o bot. |
 | `/autoplay` | Liga ou desliga a reprodução automática. |
 | `/queue` | Mostra até dez músicas da fila; pode ser usado fora do canal de voz. |

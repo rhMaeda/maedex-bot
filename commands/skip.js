@@ -8,16 +8,29 @@ module.exports = class SkipCommand extends Command {
     this.inVoiceChannel = true;
     this.slashBuilder = new SlashCommandBuilder()
       .setName("skip")
-      .setDescription("Pula a música atual");
+      .setDescription("Pula para a próxima música ou para um número da fila")
+      .addIntegerOption(option => option
+        .setName("position")
+        .setDescription("Número mostrado em /queue (1 = próxima música)")
+        .setMinValue(1));
   }
 
   async onChatInput(interaction) {
     const queue = this.client.distube.getQueue(interaction.guildId);
     if (!queue) return interaction.reply({ content: "📭 Não há música tocando.", flags: MessageFlags.Ephemeral });
-    if (queue.songs.length <= 1 && !queue.autoplay) {
+    const position = interaction.options.getInteger("position");
+    const upcoming = Math.max(0, queue.songs.length - 1);
+    if (position != null && (position < 1 || position > upcoming)) {
+      return interaction.reply({ content: `❌ A música ${position} não existe na fila. Há ${upcoming} próxima(s) música(s).`, flags: MessageFlags.Ephemeral });
+    }
+    if (position == null && queue.songs.length <= 1 && !queue.autoplay) {
       return interaction.reply({ content: "❌ Não há próxima música na fila.", flags: MessageFlags.Ephemeral });
     }
 
+    if (position != null) {
+      await queue.jump(position);
+      return interaction.reply(`⏭ Indo para a música ${position} da fila!`);
+    }
     await queue.skip();
     return interaction.reply("⏭ Música pulada!");
   }
