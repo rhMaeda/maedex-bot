@@ -1,4 +1,6 @@
 // Command.js
+const sendResponse = require('./sendResponse');
+
 class Command {
   constructor(client) {
     this.client = client;
@@ -7,6 +9,10 @@ class Command {
 
   async onChatInput(interaction) {
     throw new Error("O comando não implementou onChatInput!");
+  }
+
+  respond(interaction, response) {
+    return sendResponse(interaction, response);
   }
 }
 

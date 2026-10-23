@@ -13,10 +13,10 @@ module.exports = class StopCommand extends Command {
 
   async onChatInput(interaction) {
     const queue = this.client.distube.getQueue(interaction.guildId);
-    if (!queue) return interaction.reply({ content: "📭 Não há música tocando.", flags: MessageFlags.Ephemeral });
+    if (!queue) return this.respond(interaction, { content: "📭 Não há música tocando.", flags: MessageFlags.Ephemeral });
 
     await queue.stop();
     this.client.distube.voices.leave(interaction.guildId);
-    return interaction.reply("⏹ Música parada. Até a próxima!");
+    return this.respond(interaction, "⏹ Música parada. Até a próxima!");
   }
 };

@@ -36,17 +36,17 @@ module.exports = class PlayCommand extends Command {
 
   async onChatInput(interaction) {
     const input = interaction.options.getString("input");
-    if (!input) return interaction.reply({ content: "❌ Informe um link ou nome de música.", flags: MessageFlags.Ephemeral });
+    if (!input) return this.respond(interaction, { content: "❌ Informe um link ou nome de música.", flags: MessageFlags.Ephemeral });
 
     const skip = interaction.options.getBoolean("skip") ?? false;
     const position = interaction.options.getInteger("position") ?? undefined;
     const vc = interaction.member?.voice?.channel;
 
     if (skip && position !== undefined) {
-      return interaction.reply({ content: "❌ Use 'skip' ou 'position', não os dois juntos.", flags: MessageFlags.Ephemeral });
+      return this.respond(interaction, { content: "❌ Use 'skip' ou 'position', não os dois juntos.", flags: MessageFlags.Ephemeral });
     }
 
-    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+    if (!interaction.deferred) await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
     try {
       // Preserva o erro de autenticação que o DisTube converte em NO_RESULT.
@@ -60,14 +60,14 @@ module.exports = class PlayCommand extends Command {
       await this.client.distube.play(vc, song, {
         skip,
         position,
-        textChannel: interaction.channel,
+        textChannel: interaction.musicOutputChannel || interaction.channel,
         member: interaction.member,
       });
 
-      await interaction.editReply("✅ Música iniciada ou adicionada à fila.");
+      await this.respond(interaction, "✅ Música iniciada ou adicionada à fila.");
     } catch (err) {
       console.error(err);
-      await interaction.editReply(err.code === "YOUTUBE_AUTH_REQUIRED"
+      await this.respond(interaction, err.code === "YOUTUBE_AUTH_REQUIRED"
         ? "❌ O YouTube bloqueou o acesso desta VPS. Configure YOUTUBE_COOKIES_FILE no servidor."
         : "❌ Não consegui tocar essa música. Confira o link ou tente outro termo.");
     }

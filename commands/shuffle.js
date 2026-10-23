@@ -14,10 +14,10 @@ module.exports = class ShuffleCommand extends Command {
   async onChatInput(interaction) {
     const queue = this.client.distube.getQueue(interaction.guildId);
     if (!queue || queue.songs.length < 3) {
-      return interaction.reply({ content: "❌ São necessárias pelo menos duas próximas músicas para embaralhar.", flags: MessageFlags.Ephemeral });
+      return this.respond(interaction, { content: "❌ São necessárias pelo menos duas próximas músicas para embaralhar.", flags: MessageFlags.Ephemeral });
     }
 
     await queue.shuffle();
-    return interaction.reply("🔀 Próximas músicas embaralhadas!");
+    return this.respond(interaction, "🔀 Próximas músicas embaralhadas!");
   }
 };

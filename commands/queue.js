@@ -13,7 +13,7 @@ module.exports = class QueueCommand extends Command {
   async onChatInput(interaction) {
     const queue = this.client.distube.getQueue(interaction.guildId);
     if (!queue || !queue.songs.length) {
-      return interaction.reply({ content: "📭 A fila está vazia.", flags: MessageFlags.Ephemeral });
+      return this.respond(interaction, { content: "📭 A fila está vazia.", flags: MessageFlags.Ephemeral });
     }
 
     const list = queue.songs
@@ -22,6 +22,6 @@ module.exports = class QueueCommand extends Command {
       .join("\n");
 
     const remaining = queue.songs.length - 10;
-    return interaction.reply(`📜 **Fila de músicas:**\n\n${list}${remaining > 0 ? `\n… e mais ${remaining} música(s).` : ''}`);
+    return this.respond(interaction, `📜 **Fila de músicas:**\n\n${list}${remaining > 0 ? `\n… e mais ${remaining} música(s).` : ''}`);
   }
 };

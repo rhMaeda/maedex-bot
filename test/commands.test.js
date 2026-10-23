@@ -7,9 +7,11 @@ const { Queue } = require('distube');
 const InteractionCreateEvent = require('../events/client/interactionCreate');
 const VoiceStateUpdateEvent = require('../events/client/voiceStateUpdate');
 const QueueCommand = require('../commands/queue');
+const PlayCommand = require('../commands/play');
 const SkipCommand = require('../commands/skip');
 const ShuffleCommand = require('../commands/shuffle');
 const StopCommand = require('../commands/stop');
+const sendResponse = require('../sendResponse');
 
 test('os comandos registráveis incluem as opções do play', () => {
   const definitions = readdirSync(join(__dirname, '../commands'))
@@ -52,6 +54,70 @@ test('somente usuários no mesmo canal de voz controlam a reprodução', async (
   event.client.distube.getQueue = () => undefined;
   await event.run(interaction(null));
   assert.equal(executions, 2);
+});
+
+test('com canal configurado, /play usado em outro canal publica a resposta e os avisos nele', async t => {
+  const previous = process.env.MUSIC_CHANNEL_ID;
+  process.env.MUSIC_CHANNEL_ID = 'music-channel';
+  t.after(() => {
+    if (previous === undefined) delete process.env.MUSIC_CHANNEL_ID;
+    else process.env.MUSIC_CHANNEL_ID = previous;
+  });
+
+  const messages = [];
+  const acknowledgements = [];
+  let playOptions;
+  const outputChannel = {
+    id: 'music-channel',
+    isTextBased: () => true,
+    permissionsFor: () => ({ has: () => true }),
+    send: async message => { messages.push(message); },
+  };
+  const client = {
+    user: { id: 'bot' },
+    commands: new Map(),
+    distube: {
+      getQueue: () => undefined,
+      play: async (_voiceChannel, _song, options) => { playOptions = options; },
+    },
+  };
+  client.commands.set('play', new PlayCommand(client));
+  const event = new InteractionCreateEvent(client);
+  const interaction = {
+    isChatInputCommand: () => true,
+    commandName: 'play',
+    guildId: 'guild',
+    channelId: 'other-channel',
+    channel: { id: 'other-channel' },
+    guild: { channels: { fetch: async () => outputChannel } },
+    member: { voice: { channel: { id: 'voice-channel' } } },
+    options: {
+      getString: () => 'https://www.youtube.com/watch?v=0J2QdDbelmY',
+      getBoolean: () => null,
+      getInteger: () => null,
+    },
+    deferReply: async () => { interaction.deferred = true; },
+    editReply: async message => { acknowledgements.push(message); },
+  };
+
+  await event.run(interaction);
+  assert.equal(playOptions.textChannel, outputChannel);
+  assert.equal(messages[0].content, '✅ Música iniciada ou adicionada à fila.');
+  assert.match(acknowledgements[0], /music-channel/);
+});
+
+test('respostas de erro também são publicadas no canal configurado', async () => {
+  let sent;
+  let acknowledgement;
+  await sendResponse({
+    deferred: true,
+    musicOutputChannel: { id: 'music-channel', send: async message => { sent = message; } },
+    editReply: async message => { acknowledgement = message; },
+  }, { content: '📭 A fila está vazia.', flags: 64 });
+
+  assert.equal(sent.content, '📭 A fila está vazia.');
+  assert.deepEqual(sent.allowedMentions, { parse: [] });
+  assert.match(acknowledgement, /music-channel/);
 });
 
 test('a fila longa cabe em uma resposta do Discord', async () => {

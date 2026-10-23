@@ -61,16 +61,17 @@ test("bloqueio do YouTube não toca remix do SoundCloud", async t => {
     plugins: [youtube, soundcloud],
     play: async () => { throw new Error("Não deveria tocar"); }
   } });
-  await command.onChatInput({
+  const interaction = {
     options: {
       getString: () => "seven nation army",
       getBoolean: () => null,
       getInteger: () => null
     },
     member: { voice: { channel: {} } },
-    deferReply: async () => {},
+    deferReply: async () => { interaction.deferred = true; },
     editReply: async message => { reply = message; }
-  });
+  };
+  await command.onChatInput(interaction);
 
   assert.equal(fallback.mock.callCount(), 0);
   assert.match(reply, /YouTube bloqueou/);

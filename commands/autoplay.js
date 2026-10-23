@@ -13,9 +13,9 @@ module.exports = class AutoplayCommand extends Command {
 
   async onChatInput(interaction) {
     const queue = this.client.distube.getQueue(interaction.guildId);
-    if (!queue) return interaction.reply({ content: "📭 Não há música tocando.", flags: MessageFlags.Ephemeral });
+    if (!queue) return this.respond(interaction, { content: "📭 Não há música tocando.", flags: MessageFlags.Ephemeral });
 
     const status = queue.toggleAutoplay();
-    return interaction.reply(`🔁 Autoplay **${status ? "ativado" : "desativado"}**`);
+    return this.respond(interaction, `🔁 Autoplay **${status ? "ativado" : "desativado"}**`);
   }
 };

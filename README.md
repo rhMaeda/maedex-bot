@@ -12,6 +12,8 @@ Bot de música para Discord com comandos de barra. Aceita links de Spotify, YouT
 
 Após mudar a definição de um comando, execute `npm run deploy` novamente.
 
+Para concentrar as mensagens em um canal de texto, copie o ID do canal no Discord e defina `MUSIC_CHANNEL_ID` no `.env`. O bot precisa das permissões **Ver canal** e **Enviar mensagens** nesse canal. Os comandos podem ser usados em qualquer canal; a resposta e os avisos de reprodução aparecem no canal configurado, e quem usou o comando recebe uma confirmação privada no canal de origem. Deixe a variável vazia para manter o comportamento atual.
+
 Se o YouTube bloquear a VPS com "Sign in to confirm you’re not a bot", siga o [guia oficial do yt-dlp](https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp) para exportar cookies em formato Netscape. Guarde o arquivo **fora do repositório**, com acesso restrito (`chmod 600`), e defina `YOUTUBE_COOKIES_FILE=/caminho/para/cookies.txt` no `.env`. Cookies dão acesso à conta: não compartilhe o arquivo nem o coloque no Git. O bloqueio pode persistir mesmo com cookies, dependendo do IP ou da conta.
 
 ## Comandos
