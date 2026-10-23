@@ -2,6 +2,15 @@
 
 Bot de música para Discord com comandos de barra. Aceita links de Spotify, YouTube e SoundCloud. Para buscas por nome, tenta YouTube primeiro e SoundCloud depois; links do Spotify usam seus metadados e buscam o áudio nessas fontes.
 
+[Termos de Uso](TERMS_OF_SERVICE.md) · [Política de Privacidade](PRIVACY_POLICY.md)
+
+No [Discord Developer Portal](https://discord.com/developers/applications), configure os links públicos:
+
+- **Terms of Service URL:** `https://github.com/rhMaeda/maedex-bot/blob/master/TERMS_OF_SERVICE.md`
+- **Privacy Policy URL:** `https://github.com/rhMaeda/maedex-bot/blob/master/PRIVACY_POLICY.md`
+
+> Instalações anteriores tinham `.env` versionado. Antes de atualizar com `git pull`, guarde uma cópia fora do repositório e restaure-a depois. Substitua os segredos que apareceram em versões públicas anteriores.
+
 ## Preparação
 
 1. Instale Node.js 22 ou superior e execute `npm ci`. No Linux, instale também o FFmpeg do sistema (`sudo apt install ffmpeg` no Ubuntu).
