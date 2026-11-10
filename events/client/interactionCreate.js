@@ -25,7 +25,7 @@ module.exports = class InteractionCreateEvent {
       }
       if (command.inVoiceChannel) {
         const queue = this.client.distube.getQueue(interaction.guildId);
-        if (queue || command.name === 'play') {
+        if (queue || command.name === 'play' || command.name === 'radio') {
           const channel = interaction.member?.voice?.channel;
           if (!channel) {
             return sendResponse(interaction, { content: '❌ Entre em um canal de voz para usar este comando.', flags: MessageFlags.Ephemeral });

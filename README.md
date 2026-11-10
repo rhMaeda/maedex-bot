@@ -25,11 +25,14 @@ Para concentrar as mensagens em um canal de texto, copie o ID do canal no Discor
 
 Se o YouTube bloquear a VPS com "Sign in to confirm you’re not a bot", siga o [guia oficial do yt-dlp](https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp) para exportar cookies em formato Netscape. Guarde o arquivo **fora do repositório**, com acesso restrito (`chmod 600`), e defina `YOUTUBE_COOKIES_FILE=/caminho/para/cookies.txt` no `.env`. Cookies dão acesso à conta: não compartilhe o arquivo nem o coloque no Git. O bloqueio pode persistir mesmo com cookies, dependendo do IP ou da conta.
 
+Para usar `/radio`, crie uma chave de API em [Last.fm](https://www.last.fm/api/account/create) e defina `LASTFM_API_KEY` no `.env`. O Last.fm fornece as recomendações; o áudio é procurado no YouTube e, se necessário, no SoundCloud. Guarde a chave fora do Git. Após atualizar o bot na VPS, execute `npm run deploy` para registrar o comando e reinicie o processo.
+
 ## Comandos
 
 | Comando | Uso |
 | --- | --- |
 | `/play input:<link ou nome>` | Toca ou adiciona uma música à fila. `skip` interrompe a atual e toca a nova agora; `position` define sua posição na fila. Use apenas uma dessas opções por vez. |
+| `/radio musica:<nome>` | Inicia uma rádio a partir de uma música. Use `Artista - Música` para escolher a versão certa. O bot adiciona sugestões do [Last.fm](https://www.last.fm/) enquanto a fila toca; `/stop` encerra a rádio. |
 | `/skip` | Pula para a próxima música. Com `position`, vai diretamente ao número mostrado em `/queue` e remove as músicas anteriores da fila. |
 | `/shuffle` | Embaralha as próximas músicas; a música atual continua tocando. |
 | `/stop` | Para a reprodução e desconecta o bot. |

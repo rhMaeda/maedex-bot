@@ -18,7 +18,7 @@ test('os comandos registráveis incluem as opções do play', () => {
     .filter(file => file.endsWith('.js'))
     .map(file => new (require(join(__dirname, '../commands', file)))().slashBuilder.toJSON());
 
-  assert.deepEqual(definitions.map(command => command.name).sort(), ['autoplay', 'play', 'queue', 'shuffle', 'skip', 'stop']);
+  assert.deepEqual(definitions.map(command => command.name).sort(), ['autoplay', 'play', 'queue', 'radio', 'shuffle', 'skip', 'stop']);
   const play = definitions.find(command => command.name === 'play');
   assert.deepEqual(play.options.map(option => option.name), ['input', 'skip', 'position']);
   assert.equal(play.options[2].min_value, 1);

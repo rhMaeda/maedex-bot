@@ -1,8 +1,7 @@
 const Command = require("../Command");
 const { SlashCommandBuilder, MessageFlags } = require("discord.js");
 const { isURL } = require("distube");
-const { SoundCloudPlugin } = require("@distube/soundcloud");
-const PreferredYouTubePlugin = require("../plugins/PreferredYouTubePlugin");
+const musicSearch = require("../musicSearch");
 
 module.exports = class PlayCommand extends Command {
   constructor(client) {
@@ -52,9 +51,7 @@ module.exports = class PlayCommand extends Command {
       // Preserva o erro de autenticação que o DisTube converte em NO_RESULT.
       let song = input;
       if (!isURL(input)) {
-        const youtube = this.client.distube.plugins.find(plugin => plugin instanceof PreferredYouTubePlugin);
-        const soundcloud = this.client.distube.plugins.find(plugin => plugin instanceof SoundCloudPlugin);
-        song = await youtube.searchSong(input) || await soundcloud.searchSong(input);
+        song = await musicSearch(this.client, input);
         if (!song) throw new Error("Nenhuma música encontrada.");
       }
       await this.client.distube.play(vc, song, {

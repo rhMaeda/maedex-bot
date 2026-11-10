@@ -15,6 +15,7 @@ class DisTubeClient extends Client {
 
     // Coleção de comandos
     this.commands = new Collection();
+    this.radioStations = new Map();
 
     // Inicializa DisTube
     this.distube = new DisTube(this, {

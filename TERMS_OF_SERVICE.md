@@ -1,6 +1,6 @@
 # Termos de Uso — Maedex Bot
 
-**Última atualização:** 23 de outubro de 2026
+**Última atualização:** 10 de novembro de 2026
 
 Estes Termos regulam o uso do Maedex Bot em servidores do Discord. O bot é mantido pelo responsável pelo projeto [rhMaeda/maedex-bot](https://github.com/rhMaeda/maedex-bot). Ao usar seus comandos, você concorda com estes Termos e com as regras aplicáveis do Discord.
 
@@ -8,7 +8,7 @@ Estes Termos regulam o uso do Maedex Bot em servidores do Discord. O bot é mant
 
 O Maedex permite buscar, adicionar, organizar e reproduzir músicas em canais de voz. Ele aceita buscas e links de serviços como YouTube, Spotify e SoundCloud. Os comandos podem ser usados em canais do servidor; as respostas públicas e os avisos de reprodução podem ser enviados a um canal de texto escolhido pelo administrador.
 
-O administrador do servidor é responsável por conceder ao bot as permissões necessárias e por informar aos membros em qual canal as respostas serão publicadas.
+A rádio usa recomendações de músicas do [Last.fm](https://www.last.fm/) e procura o áudio nos provedores de reprodução. O administrador do servidor é responsável por conceder ao bot as permissões necessárias e por informar aos membros em qual canal as respostas serão publicadas.
 
 ## 2. Uso permitido
 
@@ -16,7 +16,7 @@ Use o bot somente em servidores e canais nos quais você tenha autorização. N�
 
 ## 3. Conteúdo e serviços externos
 
-Músicas, vídeos, capas, títulos e outros conteúdos pertencem a seus respectivos titulares. O Maedex não é afiliado ao Discord, YouTube, Spotify ou SoundCloud. A disponibilidade de buscas e reprodução depende desses serviços, das permissões do servidor e da conexão de rede; alguns conteúdos podem não estar disponíveis.
+Músicas, vídeos, capas, títulos e outros conteúdos pertencem a seus respectivos titulares. O Maedex não é afiliado ao Discord, YouTube, Spotify, SoundCloud ou Last.fm. A disponibilidade de buscas e reprodução depende desses serviços, das permissões do servidor e da conexão de rede; alguns conteúdos podem não estar disponíveis.
 
 ## 4. Disponibilidade e mudanças
 
